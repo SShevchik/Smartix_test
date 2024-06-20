@@ -1,0 +1,37 @@
+version: '0'
+
+services:
+  db:
+    restart: always
+    image: postgres:12.12
+    container_name: db
+    env_file: "Smartix_test/.env"
+    ports:
+      - '5432:5432'
+    networks:
+      smartix-network:
+
+  cache:
+    restart: always
+    image: redis:7.2.1
+    container_name: cache
+    ports:
+      - '6379:6379'
+    networks:
+      smartix-network:
+
+  web:
+    build:
+      context: .
+      dockerfile: Smartix_test/Dockerfile
+    container_name: web
+    depends_on:
+      - db
+      - cache
+    ports:
+      - '8000:8000'
+    networks:
+      smartix-network:
+
+networks:
+  smartix-network:
